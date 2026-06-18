@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Tech Guarda · Señalética</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Figtree:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:100%;height:100%;overflow:hidden;background:#0A0A0B;}
+
+  /* ── SLIDES ── */
+  .slides{position:fixed;inset:0;}
+  .slide{position:absolute;inset:0;opacity:0;transition:opacity 1.2s ease;display:flex;align-items:center;justify-content:center;}
+  .slide.active{opacity:1;}
+
+  /* Foto de fondo */
+  .slide-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 8s ease;}
+  .slide.active .slide-bg{transform:scale(1.06);}
+  .slide-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(10,10,11,.72) 0%,rgba(10,10,11,.3) 60%,rgba(10,10,11,.55) 100%);}
+
+  /* Contenido del slide */
+  .slide-content{position:relative;z-index:2;padding:80px 100px;width:100%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;}
+  .slide-eyebrow{font-family:'Figtree',sans-serif;font-size:clamp(24px,2.2vw,36px);font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#F4C430;margin-bottom:28px;opacity:0;transform:translateY(20px);transition:all .7s ease .4s;}
+  .slide.active .slide-eyebrow{opacity:1;transform:translateY(0);}
+  .slide-headline{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(80px,10vw,160px);line-height:.93;letter-spacing:-.03em;color:#FAFAF8;margin-bottom:32px;opacity:0;transform:translateY(30px);transition:all .7s ease .55s;}
+  .slide.active .slide-headline{opacity:1;transform:translateY(0);}
+  .slide-sub{font-family:'Figtree',sans-serif;font-size:clamp(36px,4vw,64px);font-weight:700;color:rgba(250,250,248,.88);opacity:0;transform:translateY(20px);transition:all .7s ease .7s;}
+  .slide.active .slide-sub{opacity:1;transform:translateY(0);}
+
+  /* Badge precio */
+  .price-badge{position:absolute;top:72px;right:90px;background:#E63946;color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(28px,3vw,48px);padding:18px 36px;border-radius:999px;letter-spacing:-.02em;z-index:10;}
+  .price-badge span{font-size:.55em;font-weight:700;opacity:.85;display:block;text-align:center;margin-top:2px;letter-spacing:.04em;}
+
+  /* Slide de navegación del sitio (iframe) */
+  .slide-web .slide-bg{background:#0A0A0B;}
+  .slide-web .slide-bg::after{display:none;}
+  .web-frame-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .web-browser{width:88%;height:85%;background:#1a1a1c;border-radius:16px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,.8);display:flex;flex-direction:column;}
+  .web-bar{background:#2a2a2c;padding:12px 20px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+  .web-dots{display:flex;gap:7px;}
+  .web-dot{width:13px;height:13px;border-radius:50%;}
+  .web-dot.r{background:#E63946;}
+  .web-dot.y{background:#F4C430;}
+  .web-dot.g{background:#34d058;}
+  .web-url{background:#3a3a3c;border-radius:6px;padding:6px 16px;font-family:'Figtree',sans-serif;font-size:14px;color:rgba(255,255,255,.5);flex:1;text-align:center;}
+  .web-iframe{flex:1;border:none;width:100%;transform-origin:top left;}
+  .web-overlay{position:absolute;inset:0;z-index:3;display:flex;align-items:flex-end;padding:60px 80px;background:linear-gradient(to top,rgba(10,10,11,.85) 0%,transparent 50%);}
+  .web-msg{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(40px,5vw,80px);color:#FAFAF8;line-height:.95;letter-spacing:-.03em;}
+  .web-msg b{color:#F4C430;}
+
+  /* Slide especial: "Guarda en 60 segundos" */
+  .slide-60 .slide-bg{background:linear-gradient(135deg,#0A0A0B 0%,#1a0608 50%,#0A0A0B 100%);}
+  .slide-60 .slide-bg::after{background:none;}
+  .counter-wrap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;}
+  .counter-num{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(180px,24vw,320px);line-height:.85;color:#E63946;letter-spacing:-.05em;opacity:0;transform:scale(.8);transition:all .8s cubic-bezier(.34,1.56,.64,1) .3s;}
+  .slide-60.active .counter-num{opacity:1;transform:scale(1);}
+  .counter-label{font-family:'Figtree',sans-serif;font-weight:700;font-size:clamp(28px,3.5vw,54px);color:#FAFAF8;letter-spacing:.06em;text-transform:uppercase;opacity:0;transform:translateY(20px);transition:all .7s ease .7s;}
+  .slide-60.active .counter-label{opacity:1;transform:translateY(0);}
+  .counter-sub{font-family:'Figtree',sans-serif;font-size:clamp(32px,3.5vw,56px);font-weight:700;color:rgba(250,250,248,.75);margin-top:24px;letter-spacing:.01em;opacity:0;transition:all .7s ease .9s;}
+  .slide-60.active .counter-sub{opacity:1;}
+
+  /* Logo fijo */
+  .logo-fixed{position:fixed;bottom:44px;left:64px;z-index:100;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:26px;color:rgba(250,250,248,.55);letter-spacing:-.02em;}
+  .logo-fixed b{color:#E63946;}
+
+  /* Barra de progreso */
+  .progress-bar{position:fixed;bottom:0;left:0;height:3px;background:#E63946;z-index:100;transition:width linear;}
+
+  /* Indicadores */
+  .dots{position:fixed;bottom:44px;right:64px;display:flex;gap:10px;z-index:100;}
+  .dot{width:8px;height:8px;border-radius:50%;background:rgba(250,250,248,.25);transition:.3s;}
+  .dot.on{background:#E63946;width:24px;border-radius:4px;}
+</style>
+</head>
+<body>
+
+<div class="slides" id="slides">
+
+  <!-- SLIDE 1: Hero principal -->
+  <div class="slide active" data-dur="7000">
+    <div class="slide-bg" style="background-image:url('img/hero.jpg')"></div>
+    <div class="slide-content">
+      <div class="slide-eyebrow">Las Condes · Santiago de Chile</div>
+      <div class="slide-headline">Deja el peso.<br>Gana el día.</div>
+      <div class="slide-sub">Guarda tu maleta o bolso y vive Santiago sin cargar.</div>
+    </div>
+    <div class="price-badge">$6.000<span>por bulto · por día</span></div>
+  </div>
+
+  <!-- SLIDE 2: Guarda en 60 segundos -->
+  <div class="slide slide-60" data-dur="6000">
+    <div class="slide-bg"></div>
+    <div class="counter-wrap">
+      <div class="counter-num">60</div>
+      <div class="counter-label">segundos</div>
+      <div class="counter-sub">Así de rápido hacemos el check-in de tu equipaje</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: A la montaña -->
+  <div class="slide" data-dur="7000">
+    <div class="slide-bg" style="background-image:url('img/snow1.jpg')"></div>
+    <div class="slide-content">
+      <div class="slide-eyebrow">A la montaña</div>
+      <div class="slide-headline">Cámbiate aquí.<br>Sube liviano.</div>
+      <div class="slide-sub">Deja tu ropa de ciudad y tu equipaje con nosotros antes de subir.</div>
+    </div>
+    <div class="price-badge">$6.000<span>por bulto · por día</span></div>
+  </div>
+
+  <!-- SLIDE 4: Snowboard -->
+  <div class="slide" data-dur="7000">
+    <div class="slide-bg" style="background-image:url('img/snow2.jpg')"></div>
+    <div class="slide-content">
+      <div class="slide-eyebrow">100% seguro</div>
+      <div class="slide-headline">0 extravíos<br>desde 2022.</div>
+      <div class="slide-sub">Tu equipaje te espera exactamente donde lo dejaste.</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: Aeropuerto / viajeros -->
+  <div class="slide" data-dur="7000">
+    <div class="slide-bg" style="background-image:url('img/airport.jpg')"></div>
+    <div class="slide-content">
+      <div class="slide-eyebrow">Entre vuelos</div>
+      <div class="slide-headline">Tu vuelo es<br>más tarde.</div>
+      <div class="slide-sub">Deja la maleta y recorre Santiago sin peso hasta el embarque.</div>
+    </div>
+    <div class="price-badge">$6.000<span>por bulto · por día</span></div>
+  </div>
+
+  <!-- SLIDE 6: Sitio web en vivo -->
+  <div class="slide slide-web" data-dur="12000">
+    <div class="slide-bg"></div>
+    <div class="web-frame-wrap">
+      <div class="web-browser">
+        <div class="web-bar">
+          <div class="web-dots">
+            <div class="web-dot r"></div>
+            <div class="web-dot y"></div>
+            <div class="web-dot g"></div>
+          </div>
+          <div class="web-url">guarda.latech.cl</div>
+        </div>
+        <iframe class="web-iframe" id="webframe" src="https://guarda.latech.cl" scrolling="no"></iframe>
+      </div>
+    </div>
+    <div class="web-overlay">
+      <div class="web-msg">Reserva en<br><b>WhatsApp</b></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: Lift / telesilla -->
+  <div class="slide" data-dur="7000">
+    <div class="slide-bg" style="background-image:url('img/lift.jpg')"></div>
+    <div class="slide-content">
+      <div class="slide-eyebrow">Punto oficial · Apoquindo 4900</div>
+      <div class="slide-headline">Tu equipaje<br>te espera.</div>
+      <div class="slide-sub">Abierto todos los días · 7:00 a 19:00 hrs</div>
+    </div>
+  </div>
+
+</div><!-- /slides -->
+
+<!-- Logo fijo -->
+<div class="logo-fixed">La Tech <b>Guarda</b></div>
+
+<!-- Barra de progreso -->
+<div class="progress-bar" id="progress"></div>
+
+<!-- Indicadores -->
+<div class="dots" id="dots"></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dotsEl = document.getElementById('dots');
+  const progress = document.getElementById('progress');
+  let current = 0;
+  let timer = null;
+  let startTime = null;
+  let rafId = null;
+
+  // Crear dots
+  slides.forEach((_,i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===0?' on':'');
+    dotsEl.appendChild(d);
+  });
+
+  function getDots(){ return document.querySelectorAll('.dot'); }
+
+  function goTo(n){
+    slides[current].classList.remove('active');
+    getDots()[current].classList.remove('on');
+    current = (n + slides.length) % slides.length;
+    slides[current].classList.add('active');
+    getDots()[current].classList.add('on');
+
+    // Auto-scroll iframe cuando es el slide web
+    if(slides[current].classList.contains('slide-web')){
+      setTimeout(autoScroll, 1500);
+    }
+
+    startProgress();
+  }
+
+  function startProgress(){
+    clearTimeout(timer);
+    cancelAnimationFrame(rafId);
+    const dur = parseInt(slides[current].dataset.dur) || 7000;
+    startTime = performance.now();
+    progress.style.transition = 'none';
+    progress.style.width = '0%';
+
+    function tick(now){
+      const elapsed = now - startTime;
+      const pct = Math.min(elapsed / dur * 100, 100);
+      progress.style.width = pct + '%';
+      if(pct < 100){
+        rafId = requestAnimationFrame(tick);
+      }
+    }
+    requestAnimationFrame(tick);
+    timer = setTimeout(() => goTo(current + 1), dur);
+  }
+
+  // Auto-scroll suave del iframe
+  function autoScroll(){
+    const frame = document.getElementById('webframe');
+    if(!frame) return;
+    try{
+      let pos = 0;
+      const maxScroll = 1800;
+      const scrollInterval = setInterval(() => {
+        pos += 3;
+        frame.contentWindow.scrollTo(0, pos);
+        if(pos >= maxScroll) clearInterval(scrollInterval);
+      }, 30);
+    } catch(e){}
+  }
+
+  startProgress();
+</script>
+</body>
+</html>
